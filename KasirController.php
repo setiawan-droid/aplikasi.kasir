@@ -82,7 +82,7 @@ class KasirController extends Controller
     $grandTotal = $total - $diskonNominal;
     $kembalian = $bayar - $grandTotal;
 
-    // 1️⃣ Simpan transaksi dulu
+    // Simpan transaksi dulu
     $transaksi = Transaksi::create([
         'kode_transaksi' => 'TRX-' . date('YmdHis'),
         'total' => $total,
@@ -94,7 +94,7 @@ class KasirController extends Controller
         'user_id' => auth()->id(),
     ]);
 
-    // 2️⃣ Simpan detail transaksi
+    // Simpan detail transaksi
     foreach ($cart as $productId => $item) {
         TransaksiDetail::create([
             'transaksi_id' => $transaksi->id,   // aman, sudah ada
@@ -105,11 +105,11 @@ class KasirController extends Controller
             'subtotal'     => ($item['price'] * $item['qty'])
         ]);
 
-        // 3️⃣ Kurangi stok produk
+        // Kurangi stok produk
         Product::where('id', $productId)->decrement('stok', $item['qty']);
     }
 
-    // 4️⃣ Kosongkan keranjang
+    // Kosongkan keranjang
     session()->forget('cart');
 
     return redirect()->route('transaksi.show', $transaksi->id)
